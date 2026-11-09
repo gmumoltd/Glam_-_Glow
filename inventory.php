@@ -42,9 +42,9 @@ require __DIR__ . '/includes/layout-header.php';
 </div>
 <?php endif; ?>
 
-<div class="flex justify-between items-center">
+<div class="glam-inventory-heading flex flex-wrap justify-between items-center gap-4">
   <h2 class="font-headline-lg text-headline-lg text-primary">Inventory Management</h2>
-  <div class="flex gap-stack-sm">
+  <div class="glam-inventory-actions flex flex-wrap gap-2">
     <form method="get" class="hidden sm:block">
       <input name="q" value="<?= htmlspecialchars($search) ?>" class="pl-4 pr-4 py-2 bg-surface-container-low border-none rounded-lg text-body-sm w-64 focus:ring-2 focus:ring-primary" placeholder="Search inventory, SKUs...">
     </form>
@@ -61,12 +61,12 @@ require __DIR__ . '/includes/layout-header.php';
 </div>
 
 <div class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden">
-  <div class="flex gap-2 p-4 border-b border-outline-variant">
+  <div class="flex flex-wrap items-center gap-2 p-4 border-b border-outline-variant">
     <a href="<?= BASE_URL ?>/inventory.php" class="px-4 py-1.5 <?= empty($_GET['filter']) ? 'bg-primary text-on-primary' : 'text-slate-gray hover:bg-surface-container' ?> rounded-full font-label-caps text-[11px]">All Items</a>
     <span class="px-4 py-1.5 text-slate-gray font-label-caps text-[11px]">Total Inventory Value: <span class="font-bold text-primary"><?= money($totalInventoryValue) ?></span></span>
   </div>
   <div class="overflow-x-auto">
-  <table class="w-full border-collapse">
+  <table class="glam-inventory-table w-full border-collapse" aria-label="Inventory products">
     <thead>
       <tr class="bg-slate-gray/5 text-left border-b border-outline-variant">
         <th class="p-4 font-label-caps text-label-caps text-slate-gray whitespace-nowrap">Product Details</th>

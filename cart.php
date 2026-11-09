@@ -56,6 +56,10 @@ $waLink = 'https://wa.me/' . $settings['whatsapp_number'] . '?text=' . rawurlenc
 </header>
 
 <main class="max-w-3xl mx-auto px-4 py-8">
+  <section class="glam-command glam-cart-heading" aria-labelledby="cart-title">
+    <p>Glam &amp; Glow · Your bag</p>
+    <h2 id="cart-title">Review your order</h2>
+  </section>
   <?php if (empty($items)): ?>
     <div class="bg-white border border-[#E2E8F0] rounded-xl p-8 text-center">
       <span class="material-symbols-outlined text-[#94A3B8] text-[48px]">shopping_cart</span>
@@ -65,7 +69,7 @@ $waLink = 'https://wa.me/' . $settings['whatsapp_number'] . '?text=' . rawurlenc
   <?php else: ?>
     <form method="post" class="bg-white border border-[#E2E8F0] rounded-xl overflow-hidden mb-4">
       <?php foreach ($items as $item): ?>
-        <div class="flex items-center gap-3 p-4 border-b border-[#E2E8F0] last:border-0">
+        <div class="glam-cart-line flex items-center gap-3 p-4 border-b border-[#E2E8F0] last:border-0">
           <div class="flex-1">
             <p class="font-bold text-sm text-[#0F172A]"><?= htmlspecialchars($item['product_name']) ?></p>
             <p class="text-xs text-[#64748B]"><?= htmlspecialchars($item['color']) ?> · <?= htmlspecialchars($item['size']) ?> · <?= money($item['effective_price']) ?></p>
@@ -81,7 +85,7 @@ $waLink = 'https://wa.me/' . $settings['whatsapp_number'] . '?text=' . rawurlenc
       </div>
     </form>
 
-    <div class="bg-white border border-[#E2E8F0] rounded-xl p-4">
+    <div class="glam-order-summary bg-white border border-[#E2E8F0] rounded-xl p-4">
       <div class="flex justify-between text-lg font-bold text-[#0F172A] mb-4">
         <span>Order total</span>
         <span><?= money($subtotal) ?></span>
