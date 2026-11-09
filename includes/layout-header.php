@@ -97,7 +97,7 @@ tailwind.config = {
   </div>
   <nav class="flex-1 space-y-1">
     <?php foreach ($navItems as $key => $item): $isActive = ($activeNav ?? '') === $key; ?>
-      <a class="flex items-center gap-3 px-4 py-3 rounded-lg font-bold transition-all duration-200 <?= $isActive ? 'bg-primary-container text-on-primary-container' : 'text-slate-gray hover:bg-surface-container-high' ?>" href="<?= $item['href'] ?>">
+      <a class="flex items-center gap-3 px-4 py-3 rounded-lg font-bold transition-all duration-200 <?= $isActive ? 'bg-primary-container text-on-primary-container' : 'text-slate-gray hover:bg-surface-container-high' ?>" href="<?= $item['href'] ?>" <?= $isActive ? 'aria-current="page"' : '' ?>>
         <span class="material-symbols-outlined"><?= $item['icon'] ?></span>
         <span class="font-label-caps text-label-caps"><?= $item['label'] ?></span>
       </a>
@@ -125,6 +125,7 @@ tailwind.config = {
       <button id="sidebar-toggle" class="md:hidden w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container transition-colors text-slate-gray" aria-label="Open menu">
         <span class="material-symbols-outlined">menu</span>
       </button>
+      <span class="min-w-0 truncate font-bold text-primary" aria-current="location"><?= htmlspecialchars($pageTitle ?? ($navItems[$activeNav ?? '']['label'] ?? 'Dashboard')) ?></span>
       <div class="relative w-full max-w-md hidden sm:block">
         <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-gray">search</span>
         <input class="w-full pl-10 pr-4 py-2 bg-surface-container-low border-none rounded-lg font-body-sm text-body-sm focus:ring-2 focus:ring-primary transition-all" placeholder="Search orders, products, or customers..." type="text"/>

@@ -49,7 +49,7 @@ $activeNav = 'dashboard';
 require __DIR__ . '/includes/layout-header.php';
 ?>
 
-<div class="flex justify-between items-end">
+<div class="flex flex-wrap justify-between items-end gap-3">
   <div>
     <p class="font-label-caps text-label-caps text-slate-gray mb-1 uppercase">Overview</p>
     <h2 class="font-headline-lg text-headline-lg text-primary">Command Center</h2>
@@ -143,7 +143,7 @@ require __DIR__ . '/includes/layout-header.php';
 
   <div class="bg-surface-container-lowest p-card-padding border border-outline-variant rounded-xl">
     <h4 class="font-headline-md text-headline-md font-bold text-primary mb-stack-md">Top Selling Products</h4>
-    <table class="w-full">
+    <div class="glam-dashboard-table" tabindex="0" role="region" aria-label="Scrollable sales table"><table class="w-full">
       <thead>
         <tr class="text-left border-b border-outline-variant">
           <th class="py-2 font-label-caps text-label-caps text-slate-gray">Product</th>
@@ -163,7 +163,7 @@ require __DIR__ . '/includes/layout-header.php';
           <tr><td colspan="3" class="py-4 text-center text-slate-gray font-body-sm">No sales yet.</td></tr>
         <?php endif; ?>
       </tbody>
-    </table>
+    </table></div>
   </div>
 </div>
 
@@ -173,7 +173,7 @@ require __DIR__ . '/includes/layout-header.php';
       <h4 class="font-headline-md text-headline-md font-bold text-primary">Recent Orders</h4>
       <a href="<?= BASE_URL ?>/sales-feed.php" class="font-label-caps text-[11px] text-primary">View all</a>
     </div>
-    <table class="w-full">
+    <div class="glam-dashboard-table" tabindex="0" role="region" aria-label="Scrollable sales table"><table class="w-full">
       <thead>
         <tr class="text-left border-b border-outline-variant">
           <th class="py-2 font-label-caps text-label-caps text-slate-gray">Order</th>
@@ -197,7 +197,7 @@ require __DIR__ . '/includes/layout-header.php';
           <tr><td colspan="4" class="py-4 text-center text-slate-gray font-body-sm">No orders yet.</td></tr>
         <?php endif; ?>
       </tbody>
-    </table>
+    </table></div>
   </div>
 
   <div class="bg-surface-container-lowest p-card-padding border border-outline-variant rounded-xl">

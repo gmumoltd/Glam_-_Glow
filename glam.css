@@ -28,3 +28,43 @@
   .glam-dock a{display:grid;justify-items:center;align-content:center;min-height:48px;flex:1;font-size:.68rem;text-align:center;font-weight:700}
   .glam-dock .glam-dock-add{color:white;background:#5934a5;border-radius:1rem}
 }
+
+.glam-dashboard-table {
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+@media (max-width: 767px) {
+  .glam-admin main > header { padding-inline: 1rem; gap: .5rem; }
+  .glam-admin main > .p-container-margin { padding-inline: 1rem; min-width: 0; }
+  .glam-admin main > .p-container-margin > .grid > * { min-width: 0; overflow-wrap: anywhere; }
+}
+
+.glam-dock a {
+  border-radius: 1rem;
+  transition: background-color .18s ease, box-shadow .18s ease, color .18s ease;
+}
+
+.glam-dock .glam-dock-add:not([aria-current]) {
+  background: #eee7fc;
+  color: #5934a5;
+}
+
+.glam-dock a[aria-current="page"],
+#sidebar nav a[aria-current="page"],
+.glam-dock a:focus-visible,
+#sidebar nav a:focus-visible {
+  background: #ffd3a3;
+  color: #532b10;
+  box-shadow: 0 0 14px #ff9a4f80;
+}
+
+@media (hover: hover) {
+  .glam-dock a:hover,
+  #sidebar nav a:hover {
+    background: #ffbd80;
+    color: #532b10;
+    box-shadow: 0 0 18px #ff8c4b99;
+  }
+}
