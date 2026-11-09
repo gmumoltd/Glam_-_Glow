@@ -1,9 +1,8 @@
-# Valmier Enterprise — Retail Intelligence Platform
+# Glam & Glow — Retail Intelligence Platform
 
 A retail management system for clothing/apparel sellers: a role-gated owner
 back office (dashboard, inventory, POS, marketing, analytics) plus a public
-customer-facing shop with a cart and WhatsApp checkout. Built for **Valmier
-Enterprise**, designed so the storefront name/logo/branding can be swapped
+customer-facing shop with a cart and WhatsApp checkout. Built for **Glam & Glow**, designed so the storefront name/logo/branding can be swapped
 per-business from Settings without touching code.
 
 Visual design follows the "Retail Intelligence Platform" design system
@@ -23,9 +22,9 @@ green + violet palette).
 1. **Create the database and app user:**
    ```bash
    mysql -u root -e "
-     CREATE DATABASE valmier_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+     CREATE DATABASE glowglam_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
      CREATE USER 'valmier_app'@'localhost' IDENTIFIED BY 'ChangeMe2026!';
-     GRANT ALL PRIVILEGES ON valmier_db.* TO 'valmier_app'@'localhost';
+     GRANT ALL PRIVILEGES ON glowglam_db.* TO 'valmier_app'@'localhost';
      FLUSH PRIVILEGES;
    "
    ```
@@ -35,7 +34,7 @@ green + violet palette).
 
 2. **Import the schema:**
    ```bash
-   mysql -u root valmier_db < database/schema.sql
+   mysql -u root glowglam_db < database/schema.sql
    ```
    `schema.sql` is a single, self-contained file — every table (categories,
    products, variants, images, customers, orders, order_items, campaigns,
@@ -60,7 +59,7 @@ green + violet palette).
 ## Setup — InfinityFree hosting
 
 1. In the InfinityFree control panel, create a MySQL database (it will be
-   named something like `epizXXXXXXX_valmier`) and note the host, database
+   named something like `epizXXXXXXX_glowglam`) and note the host, database
    name, username, and password it gives you.
 2. Open phpMyAdmin for that database and use **Import** to upload
    `database/schema.sql` as-is — it has no `CREATE DATABASE` statement, so it

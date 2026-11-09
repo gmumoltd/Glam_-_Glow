@@ -1,21 +1,21 @@
 <?php
 /**
  * Database connection (PDO)
- * Valmier Enterprise
+ * Glam & Glow
  *
  * On InfinityFree, replace the fallback values below with the exact
  * host / database / username / password shown in your control panel
  * (MySQL Databases section) — they look like:
  *   host: sqlXXX.infinityfree.com
- *   name: epizXXXXXXX_valmier
- *   user: epizXXXXXXX_valmier  (same as db name)
+ *   name: epizXXXXXXX_glowglam
+ *   user: epizXXXXXXX_glowglam  (same as db name)
  *   pass: whatever you set when creating the database
  */
 
 define('DB_HOST', getenv('VALMIER_DB_HOST') ?: 'localhost');
-define('DB_NAME', getenv('VALMIER_DB_NAME') ?: 'valmier_db');
-define('DB_USER', getenv('VALMIER_DB_USER') ?: 'valmier_app');
-define('DB_PASS', getenv('VALMIER_DB_PASS') ?: 'ChangeMe2026!');
+define('DB_NAME', getenv('VALMIER_DB_NAME') ?: 'glowglam_db');
+define('DB_USER', getenv('VALMIER_DB_USER') ?: 'root');
+define('DB_PASS', getenv('VALMIER_DB_PASS') ?: '');
 
 function db(): PDO
 {

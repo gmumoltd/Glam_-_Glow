@@ -1,8 +1,8 @@
--- Valmier Enterprise — full database schema
+-- Glam & Glow — full database schema
 -- Single-file schema for InfinityFree (or any shared MySQL/MariaDB host).
 --
 -- InfinityFree gives you ONE pre-created database per hosting account
--- (name looks like "epizXXXXXXX_valmier") — you cannot CREATE DATABASE or
+-- (name looks like "epizXXXXXXX_glowglam") — you cannot CREATE DATABASE or
 -- CREATE USER yourself, so this file intentionally has neither. Import it
 -- from phpMyAdmin (or Tools > Import in their panel) against the database
 -- they already created for you.
@@ -144,7 +144,7 @@ CREATE TABLE users (
 
 CREATE TABLE store_settings (
     id INT PRIMARY KEY DEFAULT 1,
-    business_name VARCHAR(150) NOT NULL DEFAULT 'Valmier Enterprise',
+    business_name VARCHAR(150) NOT NULL DEFAULT 'Glam & Glow',
     logo_path VARCHAR(255) DEFAULT NULL,
     whatsapp_number VARCHAR(30) DEFAULT '254712345678'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -156,7 +156,7 @@ SET FOREIGN_KEY_CHECKS = 1;
 -- ---------------------------------------------------------------------
 
 INSERT INTO store_settings (id, business_name, whatsapp_number) VALUES
-    (1, 'Valmier Enterprise', '254712345678');
+    (1, 'Glam & Glow', '254712345678');
 
 INSERT INTO categories (name, slug, sort_order) VALUES
     ('Combat Clothing', 'combat-clothing', 1),
