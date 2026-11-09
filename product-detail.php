@@ -61,7 +61,7 @@ function whatsapp_detail_link(array $product, float $price, string $waNumber, st
 </style>
 <link rel="stylesheet" href="<?= htmlspecialchars(BASE_URL) ?>/glam.css">
 </head>
-<body class="bg-[#F8FAFC] font-['Inter'] min-h-screen">
+<body class="glam-product bg-[#F8FAFC] font-['Inter'] min-h-screen">
 
 <header class="bg-white border-b border-[#E2E8F0] sticky top-0 z-10">
   <div class="max-w-5xl mx-auto px-4 h-16 flex items-center gap-3">
@@ -160,7 +160,7 @@ function whatsapp_detail_link(array $product, float $price, string $waNumber, st
 
           <div class="mb-3">
             <label class="text-xs font-bold text-[#64748B] block mb-1">Color</label>
-            <div id="colorSwatches" class="flex gap-2"></div>
+            <div id="colorSwatches" class="flex flex-wrap gap-2"></div>
             <p class="text-xs text-[#64748B] mt-1" id="selectedColorLabel"></p>
           </div>
 

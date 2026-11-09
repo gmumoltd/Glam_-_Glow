@@ -6,6 +6,7 @@ $successOrder = null;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cart_json'])) {
     $cart = json_decode($_POST['cart_json'], true) ?: [];
+    $channel = ($_POST['channel'] ?? '') === 'whatsapp' ? 'whatsapp' : 'walk-in';
     $customerName = trim($_POST['customer_name'] ?? 'Walk-in Customer') ?: 'Walk-in Customer';
     $customerPhone = trim($_POST['customer_phone'] ?? '');
     $discount = (float) ($_POST['discount'] ?? 0);
@@ -18,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cart_json'])) {
             $subtotal = 0;
             foreach ($cart as $item) {
                 $variant = get_variant((int) $item['variant_id']);
-                if (!$variant || $variant['stock'] < (int) $item['qty']) {
+                if (!$variant || (int) $item['qty'] < 1 || $variant['stock'] < (int) $item['qty']) {
                     throw new RuntimeException('Insufficient stock for ' . htmlspecialchars($variant['product_name'] ?? 'item'));
                 }
                 $subtotal += $variant['effective_price'] * (int) $item['qty'];
@@ -26,17 +27,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cart_json'])) {
             $total = max(0, $subtotal - $discount);
             $orderNumber = generate_order_number();
 
-            $orderStmt = $pdo->prepare('INSERT INTO orders (order_number, customer_name, customer_phone, channel, subtotal, discount, total, status, processed_by) VALUES (?,?,?,"walk-in",?,?,?,?,?)');
-            $orderStmt->execute([$orderNumber, $customerName, $customerPhone, $subtotal, $discount, $total, $paymentStatus, current_user()['id']]);
+            $orderStmt = $pdo->prepare('INSERT INTO orders (order_number, customer_name, customer_phone, channel, subtotal, discount, total, status, processed_by) VALUES (?,?,?,?,?,?,?,?,?)');
+            $orderStmt->execute([$orderNumber, $customerName, $customerPhone, $channel, $subtotal, $discount, $total, $paymentStatus, current_user()['id']]);
             $orderId = $pdo->lastInsertId();
 
             $itemStmt = $pdo->prepare('INSERT INTO order_items (order_id, product_id, variant_id, product_name, color, size, qty, unit_price) VALUES (?,?,?,?,?,?,?,?)');
-            $stockStmt = $pdo->prepare('UPDATE product_variants SET stock = stock - ? WHERE id = ?');
+            $stockStmt = $pdo->prepare('UPDATE product_variants SET stock = stock - ? WHERE id = ? AND stock >= ?');
 
             foreach ($cart as $item) {
                 $variant = get_variant((int) $item['variant_id']);
                 $itemStmt->execute([$orderId, $variant['product_id'] ?? null, $variant['id'], $variant['product_name'], $variant['color'], $variant['size'], (int) $item['qty'], $variant['effective_price']]);
-                $stockStmt->execute([(int) $item['qty'], $variant['id']]);
+                $quantity = (int) $item['qty'];
+                $stockStmt->execute([$quantity, $variant['id'], $quantity]);
+                if ($stockStmt->rowCount() !== 1) {
+                    throw new RuntimeException('Stock changed. Review the quantities and try again.');
+                }
             }
 
             $pdo->commit();
@@ -196,6 +201,11 @@ require __DIR__ . '/includes/layout-header.php';
         </div>
       </div>
       <form method="post" id="checkoutForm">
+        <label for="saleChannel" class="block text-sm font-bold mt-3">Sales channel</label>
+        <select id="saleChannel" name="channel" class="w-full border rounded-lg p-2 mb-3">
+          <option value="walk-in">Walk-in</option>
+          <option value="whatsapp" <?= ($_POST['channel'] ?? '') === 'whatsapp' ? 'selected' : '' ?>>WhatsApp</option>
+        </select>
         <input type="hidden" name="cart_json" id="cartJsonInput">
         <input type="hidden" name="customer_name" id="customerNameInput">
         <input type="hidden" name="customer_phone" id="customerPhoneInput">

@@ -68,3 +68,35 @@
     box-shadow: 0 0 18px #ff8c4b99;
   }
 }
+
+@media (max-width: 767px) {
+  .glam-shop header .flex > h1,
+  .glam-cart header .flex > h1,
+  .glam-product header .flex > h1,
+  .glam-admin main > header > .flex-1 {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .glam-shop main .grid > *,
+  .glam-product main .grid > *,
+  .glam-cart main form .flex-1 {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .glam-shop main select,
+  .glam-product main input {
+    max-width: 100%;
+  }
+
+  .glam-admin #sidebar {
+    overflow-y: auto;
+  }
+}
+
+@media (max-width: 359px) {
+  .glam-shop main .grid-cols-2 {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
