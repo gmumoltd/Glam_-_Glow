@@ -49,22 +49,22 @@ $activeNav = 'dashboard';
 require __DIR__ . '/includes/layout-header.php';
 ?>
 
-<div class="flex flex-wrap justify-between items-end gap-3">
+<div class="glam-command flex flex-wrap justify-between items-end gap-3">
   <div>
-    <p class="font-label-caps text-label-caps text-slate-gray mb-1 uppercase">Overview</p>
+    <p class="font-label-caps text-label-caps text-slate-gray mb-1 uppercase">Glam &amp; Glow · Owner overview</p>
     <h2 class="font-headline-lg text-headline-lg text-primary">Command Center</h2>
   </div>
   <div class="flex gap-stack-sm">
-    <button class="px-4 py-2 bg-surface-container-lowest border border-outline-variant rounded-lg font-label-caps text-label-caps text-slate-gray flex items-center gap-2 hover:bg-surface-container transition-colors">
+    <span class="glam-command-date flex items-center gap-2">
       <span class="material-symbols-outlined text-[18px]">calendar_today</span> Today
-    </button>
+    </span>
     <a href="<?= BASE_URL ?>/pos.php" class="px-4 py-2 bg-primary text-on-primary rounded-lg font-label-caps text-label-caps flex items-center gap-2 hover:opacity-90 transition-opacity">
       <span class="material-symbols-outlined text-[18px]">add</span> New Sale
     </a>
   </div>
 </div>
 
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-gutter">
+<div class="glam-metrics grid gap-gutter">
   <div class="bg-surface-container-lowest p-card-padding border border-outline-variant rounded-xl hover:shadow-lg transition-all duration-300">
     <div class="flex justify-between items-start mb-4">
       <div class="w-10 h-10 bg-primary-fixed rounded-lg flex items-center justify-center text-primary">
@@ -103,7 +103,7 @@ require __DIR__ . '/includes/layout-header.php';
       <p class="font-body-sm text-body-sm text-secondary mt-1"><?= $healthLabel ?></p>
     </div>
     <div class="relative w-20 h-20">
-      <svg class="w-full h-full transform -rotate-90">
+      <svg viewBox="0 0 80 80" aria-hidden="true" class="w-full h-full transform -rotate-90">
         <circle class="text-surface-container-high" cx="40" cy="40" fill="transparent" r="32" stroke="currentColor" stroke-width="8"></circle>
         <circle class="text-secondary" cx="40" cy="40" fill="transparent" r="32" stroke="currentColor" stroke-dasharray="<?= $gaugeCircumference ?>" stroke-dashoffset="<?= $gaugeOffset ?>" stroke-width="8"></circle>
       </svg>
