@@ -1,0 +1,30 @@
+:root{--glam-ink:#231a36;--glam-accent:#5934a5;--glam-paper:#faf7ff}
+.glam-shop,.glam-cart,.glam-login,.glam-admin{background:radial-gradient(ellipse at top left,#ffebdf,transparent 54%),linear-gradient(150deg,#faf7ff,#e9e6fb);color:var(--glam-ink)}
+.glam-hero{isolation:isolate;position:relative;overflow:hidden;display:grid;grid-template-columns:1fr 1fr;align-items:center;min-height:clamp(28rem,73vh,50rem);margin-bottom:2rem;border-radius:2rem;background:linear-gradient(90deg,#fff9f5 15%,#fff9f5cc 49%,transparent 75%),url(glam-parrot.jpg) right center/auto 130% no-repeat,#f9e4e5;box-shadow:0 15px 45px #36235522}
+.glam-hero::before,.glam-hero::after{content:"";position:absolute;z-index:-1;right:1%;top:7%;width:45%;aspect-ratio:1;border:clamp(6px,1vw,16px) solid #fff9;border-radius:50%;box-shadow:0 8px 32px #39235533;pointer-events:none}
+.glam-hero::after{width:24%;right:35%;top:56%}
+.glam-hero-copy{padding:clamp(1.3rem,5vw,4.5rem);display:grid;justify-items:start;gap:1rem}
+.glam-hero h2{font:700 clamp(2.4rem,6vw,5rem)/.98 Georgia,serif;overflow-wrap:anywhere}
+.glam-hero p{font-weight:700}
+.glam-hero img{width:90%;max-height:65vh;object-fit:contain;border-radius:1.5rem;margin:auto}
+.glam-button,.glam-login button[type=submit],.glam-cart #checkoutBtn{display:inline-flex;justify-content:center;align-items:center;min-height:46px;padding:.75rem 1.15rem;border-radius:999px;background:linear-gradient(135deg,#714bc3,#432186);color:white;font-weight:700;box-shadow:0 6px 18px #573ca83b}
+.glam-login{padding:1rem;background:radial-gradient(circle at 15% 10%,#fff 0 8%,#dfd8fa 8.5% 12%,transparent 12.5%),linear-gradient(135deg,#f2eeff,#dedcf6)}
+.glam-login>div,.glam-cart main>div,.glam-cart main>form:not(.hidden){border-radius:1.5rem;background:#faf8fff2;box-shadow:0 12px 30px #3b315b20;border:1px solid white}
+.glam-login input:not([type=checkbox]){min-height:46px;background:#f1edfa;box-shadow:inset 2px 3px 8px #36235514;font-size:16px}
+.glam-consent{display:flex;align-items:center;gap:.65rem;font-size:.9rem}
+.glam-consent input{width:1.2rem;height:1.2rem;accent-color:var(--glam-accent)}
+.glam-admin main{min-width:0}
+.glam-dock{display:none}
+@media(max-width:767px){
+  .glam-hero{grid-template-columns:1fr;align-content:end;min-height:72svh;background:linear-gradient(0deg,#fff7f3 10%,#fff7f3dd 43%,transparent 78%),url(glam-parrot.jpg) center 44%/cover}
+  .glam-hero:has(img){background:linear-gradient(145deg,#ffefed,#ece4ff)}
+  .glam-hero img{grid-row:1;width:90%;max-height:42svh;margin-top:1rem}
+  .glam-shop main,.glam-cart main{padding-top:1rem}
+  .glam-shop select,.glam-shop input,.glam-cart input{font-size:16px}
+  .glam-shop main button,.glam-cart button{min-height:44px}
+  .glam-cart main form>div{flex-wrap:wrap}
+  .glam-admin main{padding-bottom:calc(6rem + env(safe-area-inset-bottom))}
+  .glam-dock{display:flex;position:fixed;z-index:25;left:.5rem;right:.5rem;bottom:calc(.5rem + env(safe-area-inset-bottom));padding:.35rem;background:#fff9ff;border-radius:1.5rem;box-shadow:0 8px 32px #29164140;justify-content:space-around}
+  .glam-dock a{display:grid;justify-items:center;align-content:center;min-height:48px;flex:1;font-size:.68rem;text-align:center;font-weight:700}
+  .glam-dock .glam-dock-add{color:white;background:#5934a5;border-radius:1rem}
+}

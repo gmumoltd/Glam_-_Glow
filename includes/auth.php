@@ -29,6 +29,7 @@ function attempt_login(string $email, string $password): bool
     $user = $stmt->fetch();
 
     if ($user && password_verify($password, $user['password_hash'])) {
+        session_regenerate_id(true);
         $_SESSION['user'] = ['id' => $user['id'], 'name' => $user['name'], 'email' => $user['email'], 'role' => $user['role']];
         return true;
     }

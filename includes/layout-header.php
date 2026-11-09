@@ -75,8 +75,9 @@ tailwind.config = {
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 </style>
+<link rel="stylesheet" href="<?= htmlspecialchars(BASE_URL) ?>/glam.css">
 </head>
-<body class="bg-background-subtle text-on-surface font-body-md min-h-screen">
+<body class="glam-admin bg-background-subtle text-on-surface font-body-md min-h-screen">
 
 <div id="sidebar-backdrop" class="hidden md:hidden fixed inset-0 bg-black/40 z-30"></div>
 

@@ -2,6 +2,21 @@
 require_once __DIR__ . '/includes/bootstrap.php';
 require_role(['owner']);
 
+$_SESSION['notes_csrf'] ??= bin2hex(random_bytes(32));
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_customer_note'])) {
+    if (!hash_equals($_SESSION['notes_csrf'], (string) ($_POST['notes_csrf'] ?? ''))) {
+        http_response_code(403);
+        exit('Refresh Sales and try again.');
+    }
+    $note = trim((string) ($_POST['customer_note'] ?? ''));
+    if (mb_strlen($note) > 300) {
+        http_response_code(400);
+        exit('Notes must be 300 characters or fewer.');
+    }
+    db()->prepare('UPDATE orders SET customer_note = ? WHERE id = ?')->execute([$note, (int) $_POST['save_customer_note']]);
+    header('Location: ' . BASE_URL . '/sales-feed.php?note_saved=1#order-' . (int) $_POST['save_customer_note']);
+    exit;
+}
 if (isset($_GET['mark_paid'])) {
     db()->prepare("UPDATE orders SET status = 'paid' WHERE id = ? AND status = 'pending'")->execute([(int) $_GET['mark_paid']]);
     header('Location: ' . BASE_URL . '/sales-feed.php' . (!empty($_GET['channel']) ? '?channel=' . urlencode($_GET['channel']) : ''));
@@ -78,7 +93,17 @@ require __DIR__ . '/includes/layout-header.php';
               <span class="material-symbols-outlined text-[14px]"><?= $channelIcons[$o['channel']] ?? 'shopping_bag' ?></span> <?= htmlspecialchars($o['channel']) ?>
             </span>
           </td>
-          <td class="p-4 font-body-sm"><?= htmlspecialchars($o['customer_name']) ?></td>
+          <td class="p-4 font-body-sm" id="order-<?= (int) $o['id'] ?>">
+  <?= htmlspecialchars($o['customer_name']) ?>
+  <details class="mt-2">
+    <summary>Private note</summary>
+    <form method="post" class="space-y-2">
+      <input type="hidden" name="notes_csrf" value="<?= htmlspecialchars($_SESSION['notes_csrf']) ?>">
+      <textarea name="customer_note" aria-label="Private customer note" maxlength="300" rows="3" class="border rounded p-2"><?= htmlspecialchars($o['customer_note'] ?? '') ?></textarea>
+      <button class="glam-button" name="save_customer_note" value="<?= (int) $o['id'] ?>">Save note</button>
+    </form>
+  </details>
+</td>
           <td class="p-4 font-label-numeric text-label-numeric text-right"><?= money($o['total']) ?></td>
           <td class="p-4 text-right">
             <?php if ($o['status'] === 'pending'): ?>

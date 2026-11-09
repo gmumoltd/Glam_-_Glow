@@ -58,6 +58,10 @@ $sql .= ' ORDER BY p.created_at DESC';
 $stmt = db()->prepare($sql);
 $stmt->execute($params);
 $products = $stmt->fetchAll();
+$featuredQuery = db()->prepare('SELECT p.*, (SELECT image_path FROM product_images WHERE product_id = p.id ORDER BY sort_order, id LIMIT 1) AS thumbnail FROM products p WHERE p.id = ? AND p.status = ? AND EXISTS (SELECT 1 FROM product_variants WHERE product_id = p.id AND stock > 0)');
+$featuredQuery->execute([(int) ($settings['featured_product_id'] ?? 0), 'active']);
+$featured = $featuredQuery->fetch();
+
 
 $allSizes = db()->query('SELECT DISTINCT size FROM product_variants ORDER BY size')->fetchAll(PDO::FETCH_COLUMN);
 
@@ -79,8 +83,9 @@ function whatsapp_buy_link(array $p, string $waNumber): string
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Manrope:wght@700;800&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
 <style>.material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }</style>
+<link rel="stylesheet" href="<?= htmlspecialchars(BASE_URL) ?>/glam.css">
 </head>
-<body class="bg-[#F8FAFC] font-['Inter'] min-h-screen">
+<body class="glam-shop bg-[#F8FAFC] font-['Inter'] min-h-screen">
 
 <header class="bg-white border-b border-[#E2E8F0] sticky top-0 z-10">
   <div class="max-w-6xl mx-auto px-4 h-16 flex items-center gap-3">
@@ -109,7 +114,22 @@ function whatsapp_buy_link(array $p, string $waNumber): string
 </header>
 
 <main class="max-w-6xl mx-auto px-4 py-8">
-  <h2 class="font-['Manrope'] text-2xl font-bold text-[#0F172A] mb-1">Shop Our Collection</h2>
+  <section class="glam-hero" aria-label="Collection spotlight">
+    <div class="glam-hero-copy">
+      <p><?= $featured ? 'FEATURED OFFER' : 'THE GLAM &amp; GLOW COLLECTION' ?></p>
+      <h2><?= $featured ? htmlspecialchars($featured['name']) : 'Feel confident. Look beautiful.' ?></h2>
+      <?php if ($featured): ?>
+        <p><?= htmlspecialchars(money($featured['on_sale'] ? $featured['price'] * (1 - (float) $featured['discount_percent'] / 100) : $featured['price'])) ?></p>
+        <a class="glam-button" href="<?= BASE_URL ?>/product-detail.php?id=<?= (int) $featured['id'] ?>">View offer &amp; choose size →</a>
+      <?php else: ?>
+        <a class="glam-button" href="#collection">Explore the collection ↓</a>
+      <?php endif; ?>
+    </div>
+    <?php if ($featured && $featured['thumbnail']): ?>
+      <img src="<?= BASE_URL ?>/uploads/products/<?= rawurlencode($featured['thumbnail']) ?>" alt="<?= htmlspecialchars($featured['name']) ?>">
+    <?php endif; ?>
+  </section>
+  <h2 id="collection" class="font-['Manrope'] text-2xl font-bold text-[#0F172A] mb-1">Shop Our Collection</h2>
   <p class="text-[#64748B] mb-6">Add items to your cart, or buy instantly on WhatsApp.</p>
 
   <button type="button" id="filterToggle" class="md:hidden w-full flex items-center justify-between px-4 py-3 mb-4 bg-white border border-[#E2E8F0] rounded-xl font-bold text-sm text-[#0F172A]">

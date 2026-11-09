@@ -78,7 +78,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($name === '') $errors[] = 'Product name is required.';
     if (!$categoryId) $errors[] = 'Category is required.';
-    if ($sku === '') $errors[] = 'SKU is required.';
+    if ($sku === '') {
+        $sku = $product['sku'] ?? ('GG-' . strtoupper(bin2hex(random_bytes(8))));
+    }
     if ($price <= 0) $errors[] = 'Price must be greater than 0.';
     if ($onSale && $discountPercent === null) $errors[] = 'Set a discount % when marking a product on sale.';
 
@@ -207,11 +209,7 @@ require __DIR__ . '/includes/layout-header.php';
         <label class="font-label-caps text-label-caps text-slate-gray block mb-1">Product Name</label>
         <input name="name" value="<?= htmlspecialchars($product['name'] ?? '') ?>" class="w-full px-4 py-2 border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary" required>
       </div>
-      <div class="grid grid-cols-2 gap-4">
-        <div>
-          <label class="font-label-caps text-label-caps text-slate-gray block mb-1">Collection (optional)</label>
-          <input name="collection" value="<?= htmlspecialchars($product['collection'] ?? '') ?>" class="w-full px-4 py-2 border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary" placeholder="e.g. Streetwear Series">
-        </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
           <label class="font-label-caps text-label-caps text-slate-gray block mb-1">Category</label>
           <select name="category_id" class="w-full px-4 py-2 border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary" required>
@@ -222,42 +220,15 @@ require __DIR__ . '/includes/layout-header.php';
           </select>
         </div>
       </div>
-      <div class="grid grid-cols-3 gap-4">
-        <div>
-          <label class="font-label-caps text-label-caps text-slate-gray block mb-1">SKU</label>
-          <input name="sku" value="<?= htmlspecialchars($product['sku'] ?? '') ?>" class="w-full px-4 py-2 border border-outline-variant rounded-lg font-label-numeric focus:ring-2 focus:ring-primary" required>
-        </div>
         <div>
           <label class="font-label-caps text-label-caps text-slate-gray block mb-1">Selling Price (KES)</label>
           <input type="number" step="0.01" name="price" value="<?= htmlspecialchars($product['price'] ?? '') ?>" class="w-full px-4 py-2 border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary" required>
         </div>
-        <div>
-          <label class="font-label-caps text-label-caps text-slate-gray block mb-1">Cost Price (KES)</label>
-          <input type="number" step="0.01" name="cost_price" value="<?= htmlspecialchars($product['cost_price'] ?? '') ?>" class="w-full px-4 py-2 border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary">
-        </div>
-      </div>
-      <div>
-        <label class="font-label-caps text-label-caps text-slate-gray block mb-1">Reorder Level (low-stock threshold)</label>
-        <input type="number" name="reorder_level" value="<?= htmlspecialchars($product['reorder_level'] ?? 10) ?>" class="w-32 px-4 py-2 border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary">
-      </div>
-      <div>
-        <label class="font-label-caps text-label-caps text-slate-gray block mb-1">Description</label>
-        <textarea name="description" rows="3" class="w-full px-4 py-2 border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary"><?= htmlspecialchars($product['description'] ?? '') ?></textarea>
-      </div>
     </div>
 
     <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-card-padding">
-      <h4 class="font-headline-md text-[16px] font-bold text-primary mb-3 flex items-center gap-2"><span class="material-symbols-outlined text-danger-red">sell</span>Promotion</h4>
-      <label class="flex items-center gap-2 mb-3">
-        <input type="checkbox" name="on_sale" value="1" <?= !empty($product['on_sale']) ? 'checked' : '' ?> class="w-4 h-4">
-        <span class="font-body-sm">Show "On Sale" sticker to customers</span>
-      </label>
-      <label class="font-label-caps text-label-caps text-slate-gray block mb-1">Discount %</label>
-      <input type="number" step="0.1" name="discount_percent" value="<?= htmlspecialchars($product['discount_percent'] ?? '') ?>" class="w-32 px-4 py-2 border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary" placeholder="e.g. 20">
-    </div>
-
-    <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-card-padding">
-      <h4 class="font-headline-md text-[16px] font-bold text-primary mb-3">Variants (Color / Size / Stock)</h4>
+      <h4 class="font-headline-md text-[16px] font-bold text-primary mb-3">Size, colour and quantity</h4>
+      <p class="text-sm mb-3">Add one row for each size and colour you have in stock.</p>
       <table class="w-full" id="variantTable">
         <thead><tr class="text-left"><th class="font-label-caps text-label-caps text-slate-gray pb-2">Color</th><th class="font-label-caps text-label-caps text-slate-gray pb-2">Size</th><th class="font-label-caps text-label-caps text-slate-gray pb-2">Stock</th><th></th></tr></thead>
         <tbody>
@@ -288,6 +259,38 @@ require __DIR__ . '/includes/layout-header.php';
         <span class="material-symbols-outlined text-[18px]">add</span> Add Variant
       </button>
     </div>
+<details class="bg-white rounded-xl border p-4 space-y-4"><summary class="font-bold cursor-pointer">More details</summary>
+        <div>
+          <label class="font-label-caps text-label-caps text-slate-gray block mb-1">Collection (optional)</label>
+          <input name="collection" value="<?= htmlspecialchars($product['collection'] ?? '') ?>" class="w-full px-4 py-2 border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary" placeholder="e.g. Streetwear Series">
+        </div>
+        <div>
+          <label class="font-label-caps text-label-caps text-slate-gray block mb-1">SKU</label>
+          <input name="sku" value="<?= htmlspecialchars($product['sku'] ?? '') ?>" class="w-full px-4 py-2 border border-outline-variant rounded-lg font-label-numeric focus:ring-2 focus:ring-primary" placeholder="Generated if blank">
+        </div>
+        <div>
+          <label class="font-label-caps text-label-caps text-slate-gray block mb-1">Cost Price (KES)</label>
+          <input type="number" step="0.01" name="cost_price" value="<?= htmlspecialchars($product['cost_price'] ?? '') ?>" class="w-full px-4 py-2 border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary">
+        </div>
+      <div>
+        <label class="font-label-caps text-label-caps text-slate-gray block mb-1">Reorder Level (low-stock threshold)</label>
+        <input type="number" name="reorder_level" value="<?= htmlspecialchars($product['reorder_level'] ?? 10) ?>" class="w-32 px-4 py-2 border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary">
+      </div>
+      <div>
+        <label class="font-label-caps text-label-caps text-slate-gray block mb-1">Description</label>
+        <textarea name="description" rows="3" class="w-full px-4 py-2 border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary"><?= htmlspecialchars($product['description'] ?? '') ?></textarea>
+      </div>
+    <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-card-padding">
+      <h4 class="font-headline-md text-[16px] font-bold text-primary mb-3 flex items-center gap-2"><span class="material-symbols-outlined text-danger-red">sell</span>Promotion</h4>
+      <label class="flex items-center gap-2 mb-3">
+        <input type="checkbox" name="on_sale" value="1" <?= !empty($product['on_sale']) ? 'checked' : '' ?> class="w-4 h-4">
+        <span class="font-body-sm">Show "On Sale" sticker to customers</span>
+      </label>
+      <label class="font-label-caps text-label-caps text-slate-gray block mb-1">Discount %</label>
+      <input type="number" step="0.1" name="discount_percent" value="<?= htmlspecialchars($product['discount_percent'] ?? '') ?>" class="w-32 px-4 py-2 border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary" placeholder="e.g. 20">
+    </div>
+
+</details>
   </div>
 
   <div class="space-y-stack-lg">

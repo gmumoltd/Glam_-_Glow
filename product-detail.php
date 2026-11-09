@@ -59,6 +59,7 @@ function whatsapp_detail_link(array $product, float $price, string $waNumber, st
 #lightbox { display: none; }
 #lightbox.open { display: flex; }
 </style>
+<link rel="stylesheet" href="<?= htmlspecialchars(BASE_URL) ?>/glam.css">
 </head>
 <body class="bg-[#F8FAFC] font-['Inter'] min-h-screen">
 

@@ -80,6 +80,7 @@ CREATE TABLE orders (
     order_number VARCHAR(30) NOT NULL UNIQUE,
     customer_id INT,
     customer_name VARCHAR(150) NOT NULL,
+    customer_note VARCHAR(300) DEFAULT NULL,
     customer_phone VARCHAR(30),
     channel ENUM('walk-in','website','whatsapp','tiktok') NOT NULL DEFAULT 'walk-in',
     subtotal DECIMAL(10,2) NOT NULL,
@@ -144,6 +145,7 @@ CREATE TABLE users (
 
 CREATE TABLE store_settings (
     id INT PRIMARY KEY DEFAULT 1,
+    featured_product_id INT DEFAULT NULL,
     business_name VARCHAR(150) NOT NULL DEFAULT 'Glam & Glow',
     logo_path VARCHAR(255) DEFAULT NULL,
     whatsapp_number VARCHAR(30) DEFAULT '254712345678'

@@ -6,11 +6,6 @@ $settings = get_store_settings();
 $socialLinks = get_social_links();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (isset($_POST['clear_after_checkout'])) {
-        shop_cart_clear();
-        header('Location: ' . BASE_URL . '/cart.php?checked_out=1');
-        exit;
-    }
     foreach ($_POST['qty'] ?? [] as $variantId => $qty) {
         shop_cart_update((int) $variantId, (int) $qty);
     }
@@ -23,7 +18,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 $items = shop_cart_items();
 $subtotal = shop_cart_subtotal();
-$checkedOut = isset($_GET['checked_out']);
 
 $waMessage = "Hello {$settings['business_name']}, I'd like to order:\n";
 foreach ($items as $item) {
@@ -41,8 +35,9 @@ $waLink = 'https://wa.me/' . $settings['whatsapp_number'] . '?text=' . rawurlenc
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Manrope:wght@700;800&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
 <style>.material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }</style>
+<link rel="stylesheet" href="<?= htmlspecialchars(BASE_URL) ?>/glam.css">
 </head>
-<body class="bg-[#F8FAFC] font-['Inter'] min-h-screen">
+<body class="glam-cart bg-[#F8FAFC] font-['Inter'] min-h-screen">
 
 <header class="bg-white border-b border-[#E2E8F0] sticky top-0 z-10">
   <div class="max-w-3xl mx-auto px-4 h-16 flex items-center gap-3">
@@ -61,14 +56,7 @@ $waLink = 'https://wa.me/' . $settings['whatsapp_number'] . '?text=' . rawurlenc
 </header>
 
 <main class="max-w-3xl mx-auto px-4 py-8">
-  <?php if ($checkedOut): ?>
-    <div class="bg-white border border-[#E2E8F0] rounded-xl p-8 text-center">
-      <span class="material-symbols-outlined text-[#25D366] text-[48px]">check_circle</span>
-      <h2 class="font-['Manrope'] text-xl font-bold text-[#0F172A] mt-2">Thanks! Your order was sent on WhatsApp.</h2>
-      <p class="text-[#64748B] mt-1">If a chat window didn't open, message us directly to confirm your order.</p>
-      <a href="<?= BASE_URL ?>/shop.php" class="inline-block mt-4 px-6 py-2.5 bg-[#0F172A] text-white rounded-lg font-bold text-sm">Continue Shopping</a>
-    </div>
-  <?php elseif (empty($items)): ?>
+  <?php if (empty($items)): ?>
     <div class="bg-white border border-[#E2E8F0] rounded-xl p-8 text-center">
       <span class="material-symbols-outlined text-[#94A3B8] text-[48px]">shopping_cart</span>
       <p class="text-[#64748B] mt-2">Your cart is empty.</p>
@@ -95,20 +83,19 @@ $waLink = 'https://wa.me/' . $settings['whatsapp_number'] . '?text=' . rawurlenc
 
     <div class="bg-white border border-[#E2E8F0] rounded-xl p-4">
       <div class="flex justify-between text-lg font-bold text-[#0F172A] mb-4">
-        <span>Total</span>
+        <span>Order total</span>
         <span><?= money($subtotal) ?></span>
       </div>
-      <div class="flex gap-3">
+      <p class="mb-4 text-sm">Your order opens as a draft. Tap Send in WhatsApp so we can confirm stock and delivery.</p>
+      <div class="flex flex-col sm:flex-row gap-3">
         <a href="<?= BASE_URL ?>/shop.php" class="flex-1 text-center px-4 py-3 border border-[#E2E8F0] rounded-lg font-bold text-sm text-[#0F172A]">Continue Shopping</a>
-        <button id="checkoutBtn" class="flex-1 flex items-center justify-center gap-1 px-4 py-3 bg-[#25D366] text-white rounded-lg font-bold text-sm">
-          <span class="material-symbols-outlined text-[18px]">chat</span> Checkout via WhatsApp
-        </button>
+        <a id="checkoutBtn" href="<?= htmlspecialchars($waLink) ?>" target="_blank" rel="noopener noreferrer" class="flex-1 flex items-center justify-center gap-1 px-4 py-3 text-sm">
+          <span class="material-symbols-outlined text-[18px]">chat</span> Continue to WhatsApp
+        </a>
       </div>
     </div>
 
-    <form method="post" id="clearCartForm" class="hidden">
-      <input type="hidden" name="clear_after_checkout" value="1">
-    </form>
+
   <?php endif; ?>
 </main>
 
@@ -122,15 +109,7 @@ $waLink = 'https://wa.me/' . $settings['whatsapp_number'] . '?text=' . rawurlenc
   &copy; <?= date('Y') ?> <?= htmlspecialchars($settings['business_name']) ?>. Powered by StoreMind.
 </footer>
 
-<script>
-const checkoutBtn = document.getElementById('checkoutBtn');
-if (checkoutBtn) {
-    checkoutBtn.addEventListener('click', () => {
-        window.open(<?= json_encode($waLink) ?>, '_blank');
-        document.getElementById('clearCartForm').requestSubmit();
-    });
-}
-</script>
+
 
 </body>
 </html>

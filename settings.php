@@ -4,6 +4,22 @@ require_role(['owner']);
 
 $settings = get_store_settings();
 $errors = [];
+$offerProducts = db()->query("SELECT id, name FROM products WHERE status = 'active' ORDER BY name")->fetchAll();
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_featured'])) {
+    if (!hash_equals($_SESSION['featured_csrf'] ?? '', (string) ($_POST['featured_csrf'] ?? '')) || empty($_SESSION['featured_csrf'])) {
+        http_response_code(403);
+        exit('Refresh Settings and try again.');
+    }
+    $featuredId = (int) ($_POST['featured_product_id'] ?? 0);
+    if ($featuredId && !in_array($featuredId, array_map('intval', array_column($offerProducts, 'id')), true)) {
+        http_response_code(400);
+        exit('Select an active product.');
+    }
+    db()->prepare('UPDATE store_settings SET featured_product_id = ? WHERE id = 1')->execute([$featuredId ?: null]);
+    header('Location: ' . BASE_URL . '/settings.php?featured_saved=1#featured');
+    exit;
+}
+$_SESSION['featured_csrf'] ??= bin2hex(random_bytes(32));
 $saved = false;
 $socialSaved = false;
 $categoryError = null;
@@ -100,6 +116,24 @@ require __DIR__ . '/includes/layout-header.php';
 ?>
 
 <h2 class="font-headline-lg text-headline-lg text-primary">Business Settings</h2>
+<form id="featured" method="post" class="bg-white rounded-xl p-4 space-y-3 max-w-xl">
+  <input type="hidden" name="featured_csrf" value="<?= htmlspecialchars($_SESSION['featured_csrf']) ?>">
+  <label for="featured_product_id" class="block font-bold">Storefront featured offer</label>
+  <p>Choose the product that fills the opening banner. Customers tap the offer to see details and choose a size. It appears while stock is available.</p>
+  <select name="featured_product_id" id="featured_product_id" class="w-full rounded-lg border p-3">
+    <option value="0">Show collection introduction</option>
+    <?php foreach ($offerProducts as $offer): ?>
+      <option value="<?= (int) $offer['id'] ?>" <?= (int) ($settings['featured_product_id'] ?? 0) === (int) $offer['id'] ? 'selected' : '' ?>><?= htmlspecialchars($offer['name']) ?></option>
+    <?php endforeach; ?>
+  </select>
+  <button name="save_featured" value="1" class="glam-button">Save storefront offer</button>
+  <a href="<?= BASE_URL ?>/shop.php" class="underline ml-2">Preview storefront</a>
+  <details>
+    <summary class="cursor-pointer font-bold">Preview the saved storefront at phone width</summary>
+    <iframe title="Phone preview of the storefront" src="<?= BASE_URL ?>/shop.php" loading="lazy" class="block w-full max-w-[390px] h-[640px] border rounded-2xl mt-3"></iframe>
+  </details>
+  <?php if (isset($_GET['featured_saved'])): ?><p role="status">Featured offer saved.</p><?php endif; ?>
+</form>
 
 <?php if ($saved): ?>
   <div class="bg-secondary-container/30 border border-secondary/30 rounded-xl p-4 flex items-center gap-3">
