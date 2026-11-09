@@ -1,0 +1,12 @@
+# User-uploaded content — not source code, shouldn't live in git history
+uploads/products/*
+uploads/videos/*
+uploads/logo/*
+!uploads/products/.gitkeep
+!uploads/videos/.gitkeep
+!uploads/logo/.gitkeep
+
+# OS / editor junk
+.DS_Store
+Thumbs.db
+*.swp
