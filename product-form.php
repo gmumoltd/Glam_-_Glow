@@ -56,6 +56,14 @@ if ($id) {
 }
 
 $categories = get_categories();
+$defaultCategoryId = null;
+foreach ($categories as $category) {
+    if (strcasecmp($category['name'], 'Accessories') === 0) {
+        $defaultCategoryId = $category['id'];
+        break;
+    }
+}
+$selectedCategoryId = $_POST['category_id'] ?? $product['category_id'] ?? $defaultCategoryId;
 $errors = [];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -68,7 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $reorderLevel = (int) ($_POST['reorder_level'] ?? 10);
     $description = trim($_POST['description'] ?? '');
     $onSale = isset($_POST['on_sale']) ? 1 : 0;
-    $discountPercent = $_POST['discount_percent'] !== '' ? (float) $_POST['discount_percent'] : null;
+    $discountPercent = ($_POST['discount_percent'] ?? '') !== '' ? (float) $_POST['discount_percent'] : null;
     $variantIdsIn = $_POST['variant_id'] ?? [];
     $colorsIn = $_POST['variant_color'] ?? [];
     $sizesIn = $_POST['variant_size'] ?? [];
@@ -157,7 +165,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
                     if (!in_array($ext, ['jpg', 'jpeg', 'png', 'webp'], true)) continue;
                     $newName = 'p' . $productId . '-' . bin2hex(random_bytes(4)) . '.' . $ext;
-                    move_uploaded_file($_FILES['images']['tmp_name'][$i], __DIR__ . '/uploads/products/' . $newName);
+                    $uploadDirectory = __DIR__ . '/uploads/products';
+                    if (!is_dir($uploadDirectory) && !@mkdir($uploadDirectory, 0755, true) && !is_dir($uploadDirectory)) {
+                        throw new RuntimeException('The product photos folder could not be created. Check the hosting file permissions.');
+                    }
+                    if (!move_uploaded_file($_FILES['images']['tmp_name'][$i], $uploadDirectory . '/' . $newName)) {
+                        throw new RuntimeException('The photo could not be saved. Check the hosting file permissions and try again.');
+                    }
                     $imgStmt->execute([$productId, $newName, ++$maxSort]);
                 }
             }
@@ -182,6 +196,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
             $pdo->commit();
+            $_SESSION['inventory_saved_product'] = (int) $productId;
             header('Location: ' . BASE_URL . '/inventory.php');
             exit;
         } catch (Throwable $e) {
@@ -215,7 +230,7 @@ require __DIR__ . '/includes/layout-header.php';
           <select name="category_id" class="w-full px-4 py-2 border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary" required>
             <option value="">-- Select --</option>
             <?php foreach ($categories as $cat): ?>
-              <option value="<?= $cat['id'] ?>" <?= (($product['category_id'] ?? null) == $cat['id']) ? 'selected' : '' ?>><?= htmlspecialchars($cat['name']) ?></option>
+              <option value="<?= $cat['id'] ?>" <?= ($selectedCategoryId == $cat['id']) ? 'selected' : '' ?>><?= htmlspecialchars($cat['name']) ?></option>
             <?php endforeach; ?>
           </select>
         </div>
@@ -228,7 +243,7 @@ require __DIR__ . '/includes/layout-header.php';
 
     <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-card-padding">
       <h4 class="font-headline-md text-[16px] font-bold text-primary mb-3">Size, colour and quantity</h4>
-      <p class="text-sm mb-3">Add one row for each size and colour you have in stock.</p>
+      <p class="text-sm mb-3">Add one row per size and colour. Use letters, words, or numbers, such as M, Medium, Large, or 32.</p>
       <table class="w-full" id="variantTable">
         <thead><tr class="text-left"><th class="font-label-caps text-label-caps text-slate-gray pb-2">Color</th><th class="font-label-caps text-label-caps text-slate-gray pb-2">Size</th><th class="font-label-caps text-label-caps text-slate-gray pb-2">Stock</th><th></th></tr></thead>
         <tbody>
@@ -248,7 +263,7 @@ require __DIR__ . '/includes/layout-header.php';
                 <input type="hidden" name="variant_id[]" value="">
                 <input name="variant_color[]" placeholder="Black" class="w-full px-3 py-1.5 border border-outline-variant rounded-lg">
               </td>
-              <td class="pr-2 pb-2"><input name="variant_size[]" placeholder="32" class="w-full px-3 py-1.5 border border-outline-variant rounded-lg"></td>
+              <td class="pr-2 pb-2"><input name="variant_size[]" placeholder="M or 32" class="w-full px-3 py-1.5 border border-outline-variant rounded-lg"></td>
               <td class="pr-2 pb-2"><input type="number" name="variant_stock[]" placeholder="10" class="w-full px-3 py-1.5 border border-outline-variant rounded-lg"></td>
               <td class="pb-2"><button type="button" onclick="this.closest('tr').remove()" class="text-danger-red material-symbols-outlined">close</button></td>
             </tr>
@@ -259,7 +274,7 @@ require __DIR__ . '/includes/layout-header.php';
         <span class="material-symbols-outlined text-[18px]">add</span> Add Variant
       </button>
     </div>
-<details class="bg-white rounded-xl border p-4 space-y-4"><summary class="font-bold cursor-pointer">More details</summary>
+<details class="bg-white rounded-xl border p-4 space-y-4"><summary class="font-bold cursor-pointer">More details (optional)</summary>
         <div>
           <label class="font-label-caps text-label-caps text-slate-gray block mb-1">Collection (optional)</label>
           <input name="collection" value="<?= htmlspecialchars($product['collection'] ?? '') ?>" class="w-full px-4 py-2 border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary" placeholder="e.g. Streetwear Series">
@@ -359,7 +374,7 @@ function addVariantRow() {
             <input type="hidden" name="variant_id[]" value="">
             <input name="variant_color[]" placeholder="Black" class="w-full px-3 py-1.5 border border-outline-variant rounded-lg">
         </td>
-        <td class="pr-2 pb-2"><input name="variant_size[]" placeholder="32" class="w-full px-3 py-1.5 border border-outline-variant rounded-lg"></td>
+        <td class="pr-2 pb-2"><input name="variant_size[]" placeholder="M or 32" class="w-full px-3 py-1.5 border border-outline-variant rounded-lg"></td>
         <td class="pr-2 pb-2"><input type="number" name="variant_stock[]" placeholder="10" class="w-full px-3 py-1.5 border border-outline-variant rounded-lg"></td>
         <td class="pb-2"><button type="button" onclick="this.closest('tr').remove()" class="text-danger-red material-symbols-outlined">close</button></td>
     `;

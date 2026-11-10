@@ -25,6 +25,8 @@ $lowStockDigestLink = low_stock_whatsapp_link(get_low_stock_items());
 
 $pageTitle = 'Inventory';
 $activeNav = 'inventory';
+$savedProductId = (int) ($_SESSION['inventory_saved_product'] ?? 0);
+unset($_SESSION['inventory_saved_product']);
 require __DIR__ . '/includes/layout-header.php';
 ?>
 
@@ -42,6 +44,15 @@ require __DIR__ . '/includes/layout-header.php';
 </div>
 <?php endif; ?>
 
+<?php if ($savedProductId): ?>
+  <div role="status" class="flex flex-wrap items-center justify-between gap-3 rounded-xl border bg-white p-4">
+    <p class="font-bold">Product saved.</p>
+    <div class="flex flex-wrap items-center gap-3">
+      <a class="glam-button" href="<?= BASE_URL ?>/product-detail.php?id=<?= $savedProductId ?>">View in shop</a>
+      <a class="underline" href="<?= BASE_URL ?>/product-form.php?id=<?= $savedProductId ?>">Edit details</a>
+    </div>
+  </div>
+<?php endif; ?>
 <div class="glam-inventory-heading flex flex-wrap justify-between items-center gap-4">
   <h2 class="font-headline-lg text-headline-lg text-primary">Inventory Management</h2>
   <div class="glam-inventory-actions flex flex-wrap gap-2">
