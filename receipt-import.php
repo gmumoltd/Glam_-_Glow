@@ -159,8 +159,7 @@ require __DIR__ . '/includes/layout-header.php';
         <?php endforeach; ?>
         <?php if (empty($parsedItems)): ?>
           <tr id="importEmptyRow"><td colspan="6" class="p-4 text-center text-slate-gray font-body-sm">No rows yet — click "Add Row" to enter items by hand.</td></tr>
-        <?php endif; ?>
-      </tbody>
+       </tbody>
     </table>
     </div>
   </div>

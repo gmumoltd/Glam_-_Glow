@@ -205,7 +205,8 @@ require __DIR__ . '/includes/layout-header.php';
       <h4 class="font-headline-md text-headline-md font-bold text-primary">Stock Alerts</h4>
       <?php if ($lowStockDigestLink): ?>
         <a href="<?= htmlspecialchars($lowStockDigestLink) ?>" target="_blank" class="font-label-caps text-[11px] text-secondary flex items-center gap-1">
-          <span class="material-symbols-outlined text-[16px]">chat</span> Send via WhatsApp
+   
+        <span class="material-symbols-outlined text-[16px]">chat</span> Send via WhatsApp
         </a>
       <?php endif; ?>
     </div>
